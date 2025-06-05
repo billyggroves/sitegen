@@ -1,12 +1,35 @@
 from enum import Enum
+from parentnode import ParentNode
+from htmlnode import HTMLNode
 
 class BlockType(Enum):
-    PARAGRAPH = "paragraph"
-    HEADING = "heading"
+    PARAGRAPH = "p"
+    HEADING_1 = "h1"
+    HEADING_2 = "h2"
+    HEADING_3 = "h3"
+    HEADING_4 = "h4"
+    HEADING_5 = "h5"
+    HEADING_6 = "h6"
     CODE = "code"
-    QUOTE = "quote"
-    UNORDERED_LIST = "unordered_list"
-    ORDERED_LIST = "ordered_list"
+    QUOTE = "blockquote"
+    UNORDERED_LIST = "ul"
+    ORDERED_LIST = "ol"
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    nodes = []
+    for block in blocks:
+        if block != '':
+            continue
+        nodes.append((HTMLNode(block_to_block_type(block)), block))
+
+    print(blocks)
+    print(nodes)
+    pass
+
+def text_to_children(text):
+    pass
+
 
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
@@ -19,8 +42,18 @@ def markdown_to_blocks(markdown):
     return blocks
 
 def block_to_block_type(block):
-    if block.startswith(("# ", "## " , "### ", "#### ", "##### ", "###### ")):
-        return BlockType.HEADING
+    if block.startswith("# "):
+        return BlockType.HEADING_1
+    if block.startswith("## "):
+        return BlockType.HEADING_2
+    if block.startswith("### "):
+        return BlockType.HEADING_3
+    if block.startswith("#### "):
+        return BlockType.HEADING_4
+    if block.startswith("##### "):
+        return BlockType.HEADING_5
+    if block.startswith("###### "):
+        return BlockType.HEADING_6
     if block.startswith("```") and block.endswith("```"):
         return BlockType.CODE
     
@@ -28,10 +61,6 @@ def block_to_block_type(block):
         lines = block.split("\n")
     else:
         lines = [block]
-
-    if "1. this is\n2. ordered list" == block:
-        print(block)
-        print(lines)
 
     if block.startswith(">"):
         quote = block_type_check(lines, ">")
@@ -59,4 +88,3 @@ def block_type_check(lines, prefix):
             if not line.startswith(prefix):
                 return False
     return True
-

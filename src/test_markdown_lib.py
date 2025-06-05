@@ -2,6 +2,36 @@ import unittest
 from markdown_lib import *
 
 class TestMarkdownLib(unittest.TestCase):
+    def test_paragraphs(self):
+        md = """
+                This is **bolded** paragraph
+                text in a p
+                tag here
+
+                This is another paragraph with _italic_ text and `code` here
+
+            """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+        )
+
+    def test_codeblock(self):
+        md = """
+                ```
+                This is text that _should_ remain
+                the **same** even with inline stuff
+                ```
+            """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
+
     def test_markdown_to_blocks(self):
         md = """
                 This is **bolded** paragraph
@@ -24,7 +54,7 @@ class TestMarkdownLib(unittest.TestCase):
 
     def test_block_to_block_type(self):
         md = [
-            "# this is heading",
+            "# this is heading1",
             "## this is heading2",
             "### this is heading3",
             "#### this is heading4",
@@ -69,12 +99,12 @@ class TestMarkdownLib(unittest.TestCase):
         self.assertEqual(
             block_types,
             [
-                BlockType.HEADING,
-                BlockType.HEADING,
-                BlockType.HEADING,
-                BlockType.HEADING,
-                BlockType.HEADING,
-                BlockType.HEADING,
+                BlockType.HEADING_1,
+                BlockType.HEADING_2,
+                BlockType.HEADING_3,
+                BlockType.HEADING_4,
+                BlockType.HEADING_5,
+                BlockType.HEADING_6,
                 BlockType.PARAGRAPH,
                 BlockType.PARAGRAPH,
                 BlockType.PARAGRAPH,
