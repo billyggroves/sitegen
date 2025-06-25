@@ -54,7 +54,7 @@ def split_nodes_link(old_nodes):
 
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
-    print(blocks)
+    # print(blocks)
     for index,block in enumerate(blocks):
         blocks[index] = blocks[index].lstrip("\n").rstrip("\n").strip()
     for index,block in enumerate(blocks):
