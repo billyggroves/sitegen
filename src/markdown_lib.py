@@ -108,7 +108,6 @@ def make_block_nodes(block):
             grand_kids = text_to_children(block)
             return ParentNode("h6", grand_kids)
         case BlockType.CODE:
-            # grand_kids = text_to_children(block)
             block = block.replace("```", "").lstrip("\n")
             code_node = LeafNode("code", block)
             return ParentNode("pre", [code_node])
