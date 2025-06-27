@@ -15,4 +15,6 @@ class LeafNode(HTMLNode):
             return f"{self.value}"
         if self.props == None:
             return f"<{self.tag}>{self.value}</{self.tag}>"
+        if self.tag == "img":
+            return f"<{self.tag}{self.props_to_hmtl()}/>"
         return f"<{self.tag}{self.props_to_hmtl()}>{self.value}</{self.tag}>"

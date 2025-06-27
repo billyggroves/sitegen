@@ -32,6 +32,66 @@ class TestMarkdownLib(unittest.TestCase):
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
 
+    def test_headings(self):
+        md = """
+                # Heading 1
+
+                ## Heading 2
+
+                ### Heading 3
+
+                #### Heading 4
+
+                ##### Heading 5
+
+                ###### Heading 6
+            """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6></div>",
+        )
+
+    def test_quote(self):
+        md = """
+                > This is a quote.
+
+                > testing quote...
+            """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><blockquote>This is a quote.</blockquote><blockquote>testing quote...</blockquote></div>",
+        )
+
+    def test_unordered_list(self):
+        md = """
+                - Item 1 ![alt text for image](url/of/image.jpg)
+                - Item 2 This is an _italic_ word.
+                - Item 3 This is a paragraph with a [link](https://www.google.com).
+            """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>Item 1 <img src=\"url/of/image.jpg\" alt=\"alt text for image\"/></li><li>Item 2 This is an <i>italic</i> word.</li><li>Item 3 This is a paragraph with a <a href=\"https://www.google.com\">link</a>.</li></ul></div>",
+        )
+
+    def test_ordered_list(self):
+        md = """
+                1. Item 1 ![alt text for image](url/of/image.jpg)
+                2. Item 2 This is an _italic_ word.
+                3. Item 3 This is a paragraph with a [link](https://www.google.com).
+            """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ol><li>Item 1 <img src=\"url/of/image.jpg\" alt=\"alt text for image\"/></li><li>Item 2 This is an <i>italic</i> word.</li><li>Item 3 This is a paragraph with a <a href=\"https://www.google.com\">link</a>.</li></ol></div>",
+        )
+
     def test_markdown_to_blocks(self):
         md = """
                 This is **bolded** paragraph
