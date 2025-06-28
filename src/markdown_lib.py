@@ -99,7 +99,10 @@ def block_to_paragraph(block):
 
 def block_to_heading(block, heading_level):
     new_block = block.lstrip("# ")
-    return LeafNode("h" + str(heading_level), new_block)
+    grand_nodes = text_to_children(new_block)
+    if grand_nodes == []:
+        return LeafNode("h" + str(heading_level), new_block)
+    return ParentNode("h" + str(heading_level), grand_nodes)
 
 def block_to_code(block):
     block = block.replace("```", "").lstrip("\n")

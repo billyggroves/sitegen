@@ -2,8 +2,9 @@ from os import path, listdir, makedirs
 from shutil import rmtree, copytree
 from markdown_lib import *
 import time
+import sys
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath=""):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
     # Read template
@@ -18,7 +19,11 @@ def generate_page(from_path, template_path, dest_path):
         html = markdown_to_html_node(content).to_html()
         title = extract_title(content)
         new_template = template_content.replace("{{ Title }}", title).replace("{{ Content }}", html)
-        new_file_path = md_file.replace("content", "public").replace(".md", ".html")
+        if basepath != "":
+            new_template = new_template.replace("href=\"/", f"href=\"{basepath}").replace("src=\"/", f"src=\"{basepath}")
+            new_file_path = md_file.replace("/content/", f"{basepath}docs/").replace(".md", ".html")
+        else:
+            new_file_path = md_file.replace("content", "sitegen/docs").replace(".md", ".html")
         makedirs(new_file_path.replace("/index.html", ""), exist_ok=True)
         print(new_file_path)
         with open(new_file_path, "w") as file:
@@ -42,7 +47,7 @@ def extract_title(markdown):
             return line
     raise Exception("File does not contain a title! (H1 \"# \")")
 
-def delete_public(path_to_public):
+def delete_dir(path_to_public):
     if path.exists(path_to_public) and len(listdir(path_to_public)) > 0:
         print(listdir(path_to_public))
         rmtree(path_to_public)
@@ -51,17 +56,28 @@ def delete_public(path_to_public):
 def copy_files(path_to_static, path_to_public):
     if path.exists(path_to_static) and len(listdir(path_to_static)) > 0:
         print(listdir(path_to_static))
-        copytree(path_to_static,path_to_public)
+        copytree(path_to_static, path_to_public, dirs_exist_ok=True)
     return
 
 def main():
     path_to_static = "./static/"
-    path_to_public = "./public/"
+    path_to_public = "./sitegen/"
     path_to_content = "./content"
     path_to_template = "./template.html"
-    delete_public(path_to_public)
-    copy_files(path_to_static, path_to_public)
-    generate_page(path_to_content, path_to_template, path_to_public)
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+        print(basepath)
+        if basepath != None:
+            delete_dir(basepath)
+            copy_files(path_to_static, f".{basepath}docs")
+            generate_page(path_to_content, path_to_template, path_to_public, basepath)
+    else:
+        delete_dir(path_to_public)
+        copy_files(path_to_static, path_to_public)
+        generate_page(path_to_content, path_to_template, path_to_public)
+    
+    
+    
 
 
 if __name__ == "__main__":
