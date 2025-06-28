@@ -21,9 +21,9 @@ def generate_page(from_path, template_path, dest_path, basepath=""):
         new_template = template_content.replace("{{ Title }}", title).replace("{{ Content }}", html)
         if basepath != "":
             new_template = new_template.replace("href=\"/", f"href=\"{basepath}").replace("src=\"/", f"src=\"{basepath}")
-            new_file_path = md_file.replace("/content/", f"{basepath}docs/").replace(".md", ".html")
-        else:
-            new_file_path = md_file.replace("content", "sitegen/docs").replace(".md", ".html")
+            #new_file_path = md_file.replace("/content/", f"docs/").replace(".md", ".html")
+        # else:
+        new_file_path = md_file.replace("content", "docs").replace(".md", ".html")
         makedirs(new_file_path.replace("/index.html", ""), exist_ok=True)
         print(new_file_path)
         with open(new_file_path, "w") as file:
@@ -60,6 +60,7 @@ def copy_files(path_to_static, path_to_public):
     return
 
 def main():
+    path_to_docs = "./docs"
     path_to_static = "./static/"
     path_to_public = "./sitegen/"
     path_to_content = "./content"
@@ -68,12 +69,12 @@ def main():
         basepath = sys.argv[1]
         print(basepath)
         if basepath != None:
-            delete_dir(basepath)
-            copy_files(path_to_static, f".{basepath}docs")
+            delete_dir(path_to_docs)
+            copy_files(path_to_static, path_to_docs)
             generate_page(path_to_content, path_to_template, path_to_public, basepath)
     else:
         delete_dir(path_to_public)
-        copy_files(path_to_static, path_to_public)
+        copy_files(path_to_static, path_to_docs)
         generate_page(path_to_content, path_to_template, path_to_public)
     
     
