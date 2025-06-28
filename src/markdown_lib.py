@@ -108,6 +108,8 @@ def block_to_code(block):
 
 def block_to_quote(block):
     new_block = block.lstrip("> ")
+    new_block = new_block.replace("\n", "")
+    new_block = new_block.replace(">", "")
     return LeafNode("blockquote", new_block)
 
 def block_to_list(block, b_type):
